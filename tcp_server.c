@@ -6,7 +6,8 @@
 #include<sys/socket.h>
 void error_handling(char *message);
 
-int main(int argc,char *argv[])
+//int main(int argc,char *argv[])
+int main()
 {
     int serv_sock;
     int clnt_sock;
@@ -29,14 +30,15 @@ int main(int argc,char *argv[])
     struct sockaddr_in serv_addr;
     struct sockaddr_in clnt_addr;
     socklen_t clnt_addr_size;
+    char * serv_port="9190";
 
     char message[]="Hello World!";
 
-    if(argc!=2)
-    {
-        printf("Usage : %s <port>\n",argv[0]);
-        exit(1);
-    }
+    // if(argc!=2)
+    // {
+    //     printf("Usage : %s <port>\n",argv[0]);
+    //     exit(1);
+    // }
 
     /*
     int socket(int domain,int type,int protocol)
@@ -58,7 +60,7 @@ int main(int argc,char *argv[])
     if(serv_sock==-1)
         error_handling("socket()error");
 
-    memset(&serv_addr,0,sizeof(serv_addr));
+    memset(&serv_addr,0,sizeof(serv_addr));  //将serv_addr的所有成员初始化为0
     /*
     sin_family
         AF_INET         IPV4网络协议中使用的地址族
@@ -67,8 +69,23 @@ int main(int argc,char *argv[])
     
     */
     serv_addr.sin_family=AF_INET;
-    serv_addr.sin_addr.s_addr=htonl(INADDR_ANY);
-    serv_addr.sin_port=htons(atoi(argv[1]));
+    /*
+    网络字节序为大端序
+
+    unsigned short htons(unsigned short);  //把short型数据从主机字节序转化为网络字节序
+    unsigned short ntohs(unsigned short);  //把short型数据从网络字节序转化为主机字节序
+    unsigned long htonl(unsigned long);     
+    unsigned long ntohl(unsigned long);
+
+    h表示主机(host)字节序
+    n表示网络(network)字节序
+    s表示short
+    l表示long
+    */
+
+    serv_addr.sin_addr.s_addr=htonl(INADDR_ANY); 
+    //serv_addr.sin_port=htons(atoi(argv[1]));
+    serv_addr.sin_port=htons(atoi(serv_port));
     /*bind函数的第二个参数期望得到sockaddr结构体变量地址值，包括地址族、端口号、IP地址等
     struct sockaddr
     {
